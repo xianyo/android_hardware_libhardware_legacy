@@ -28,6 +28,10 @@ ifdef WIFI_DRIVER_FW_PATH_PARAM
 LOCAL_CFLAGS += -DWIFI_DRIVER_FW_PATH_PARAM=\"$(WIFI_DRIVER_FW_PATH_PARAM)\"
 endif
 
-LOCAL_SRC_FILES += wifi/wifi.c
+ifeq ($(BOARD_HAVE_WIFI), true)
+  LOCAL_SRC_FILES += wifi/wifi_unifi.c
+else
+  LOCAL_SRC_FILES += wifi/wifi.c
+endif
 
 LOCAL_SHARED_LIBRARIES += libnetutils
