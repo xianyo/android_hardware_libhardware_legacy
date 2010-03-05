@@ -28,7 +28,7 @@ ifdef WIFI_DRIVER_FW_PATH_PARAM
 LOCAL_CFLAGS += -DWIFI_DRIVER_FW_PATH_PARAM=\"$(WIFI_DRIVER_FW_PATH_PARAM)\"
 endif
 
-ifeq ($(BOARD_HAVE_WIFI), true)
+ifeq ($(BOARD_HAVE_WIFI_CSR), true)
   LOCAL_SRC_FILES += wifi/wifi_unifi.c
 else
   LOCAL_SRC_FILES += wifi/wifi.c
