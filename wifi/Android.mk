@@ -32,7 +32,14 @@ LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant/
 ifeq ($(BOARD_HAVE_WIFI_CSR), true)
   LOCAL_SRC_FILES += wifi/wifi_unifi.c
 else
-  LOCAL_SRC_FILES += wifi/wifi.c
+  ifdef BOARD_WLAN_ATHEROS_SDK
+    LOCAL_CFLAGS += -DATHEROS_WIFI_SDK
+    LOCAL_SRC_FILES += wifi/wifi_ath.c
+  else
+    LOCAL_SRC_FILES += wifi/wifi.c
+  endif
+
 endif
+
 
 LOCAL_SHARED_LIBRARIES += libnetutils
