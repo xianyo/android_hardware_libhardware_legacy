@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* Copyright (C) 2009-2011 Freescale Semiconductor, Inc.*/
+
 #include <hardware_legacy/power.h>
 #include <fcntl.h>
 #include <errno.h>
