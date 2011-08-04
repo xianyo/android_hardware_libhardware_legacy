@@ -44,10 +44,4 @@ include $(CLEAR_VARS)
 LOCAL_MODULE:= libpower
 LOCAL_SRC_FILES += power/power.c
 
-ifeq ($(BOARD_SOC_CLASS),IMX5X)
-ifeq ($(HAVE_FSL_IMX_IPU),true)
-LOCAL_C_INCLUDES += external/linux-lib/ipu
-endif
-endif
-
 include $(BUILD_STATIC_LIBRARY)
