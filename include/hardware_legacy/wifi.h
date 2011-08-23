@@ -27,6 +27,12 @@ extern "C" {
  * @return 0 on success, < 0 on failure.
  */
 int wifi_load_driver();
+/**
+ * Load the AP Mode for Atheros Wi-Fi
+ *
+ * @return 0 on success, <0 on failure.
+ */
+int wifi_load_ap_driver();
 
 /**
  * Unload the Wi-Fi driver.
