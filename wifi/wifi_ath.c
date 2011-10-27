@@ -22,7 +22,7 @@
 #include <sys/ioctl.h>
 
 #include "hardware_legacy/wifi.h"
-#include "libwpa_client/wpa_ctrl.h"
+#include "wpa_ctrl.h"
 
 #define LOG_TAG "WifiHW"
 #include "cutils/log.h"
@@ -50,7 +50,7 @@ static char iface[PROPERTY_VALUE_MAX];
 // TODO: use new ANDROID_SOCKET mechanism, once support for multiple
 // sockets is in
 
-#if ATHEROS_WIFI_SDK
+#ifdef ATHEROS_WIFI_SDK
 
 #ifndef WIFI_DRIVER_MODULE_PATH
 #define WIFI_SDIO_IF_DRIVER_MODULE_PATH         "" /* use wlan_tool to load module */
@@ -89,11 +89,7 @@ static char iface[PROPERTY_VALUE_MAX];
 
 #define WIFI_DRIVER_LOADER_DELAY	1000000
 
-#ifdef ATHEROS_WIFI_SDK
-static const char IFACE_DIR[]           = "/data/misc/wifi/wpa_supplicant";
-#else  /* #ifdef ATHEROS_WIFI_SDK */
 static const char IFACE_DIR[]           = "/data/system/wpa_supplicant";
-#endif
 
 static const char DRIVER_MODULE_NAME[]  = WIFI_DRIVER_MODULE_NAME;
 static const char DRIVER_MODULE_TAG[]   = WIFI_DRIVER_MODULE_NAME " ";
