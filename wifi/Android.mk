@@ -28,7 +28,7 @@ ifdef WIFI_DRIVER_FW_PATH_PARAM
 LOCAL_CFLAGS += -DWIFI_DRIVER_FW_PATH_PARAM=\"$(WIFI_DRIVER_FW_PATH_PARAM)\"
 endif
 
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_ath/src/common
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
 ifeq ($(BOARD_HAVE_WIFI_CSR), true)
   LOCAL_SRC_FILES += wifi/wifi_unifi.c
 else
