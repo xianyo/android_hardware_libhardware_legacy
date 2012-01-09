@@ -443,9 +443,11 @@ int ensure_config_file_exists(const char *config_file)
         }
         /* return if filesize is at least 10 bytes */
         if (stat(config_file, &sb) == 0 && sb.st_size > 10) {
-	  #ifndef ATHEROS_WIFI_SDK
-	  return update_ctrl_interface(config_file);
-	  #endif
+        #ifdef ATHEROS_WIFI_SDK
+            return 0;
+        #else
+            return update_ctrl_interface(config_file);
+        #endif
         }
     } else if (errno != ENOENT) {
         LOGE("Cannot access \"%s\": %s", config_file, strerror(errno));
