@@ -113,6 +113,7 @@ static const char DRIVER_PROP_NAME[]    = "wlan.driver.status";
 static const char SUPPLICANT_NAME[]     = "wpa_supplicant";
 static const char SUPP_PROP_NAME[]      = "init.svc.wpa_supplicant";
 static const char SUPP_CONFIG_TEMPLATE[]= "/system/etc/wifi/wpa_supplicant.conf";
+static const char P2P_CONFIG_TEMPLATE[]= "/system/etc/wifi/wpa_supplicant_p2p.conf";
 static const char SUPP_CONFIG_FILE[]    = "/data/misc/wifi/wpa_supplicant.conf";
 static const char P2P_CONFIG_FILE[]     = "/data/misc/wifi/p2p_supplicant.conf";
 static const char CONTROL_IFACE_PATH[]  = "/data/misc/wifi";
@@ -218,13 +219,21 @@ int is_wifi_driver_loaded() {
     return 1;
 #endif
 }
+int wifi_profile_num =0;
+/*
+    when wifi driver is loaded, wifi_profile_num can be used to distinguish the profile class
+	wifi_profile_num = 0    init
+	wifi_profile_num = 1  	p2p
+	wifi_profile_num = 2	sta
+	wifi_profile_num = 3	ap
+*/
 /* for Atheros HotSpot */
 int wifi_load_ap_driver()
 {
   char driver_status[PROPERTY_VALUE_MAX];
   int count = 100; /* wait at most 20 seconds for completion */
 
-  if (is_wifi_driver_loaded()) {
+  if (is_wifi_driver_loaded()&&(wifi_profile_num == 3)) {
     return 0;
   }
   LOGV("wifi ap load driver");
@@ -239,7 +248,46 @@ int wifi_load_ap_driver()
   while (count-- > 0) {
     if (property_get(DRIVER_PROP_NAME, driver_status, NULL)) {
       if (strcmp(driver_status, "ok") == 0)
+	{
+	  wifi_profile_num =3;
 	return 0;
+	}
+      else if (strcmp(DRIVER_PROP_NAME, "failed") == 0) {
+	wifi_unload_driver();
+	return -1;
+      }
+    }
+    usleep(200000);
+  }
+  property_set(DRIVER_PROP_NAME, "timeout");
+  wifi_unload_driver();
+  return -1;
+}
+
+int wifi_load_p2p_driver()
+{
+  char driver_status[PROPERTY_VALUE_MAX];
+  int count = 100; /* wait at most 20 seconds for completion */
+
+  if (is_wifi_driver_loaded()&&(wifi_profile_num == 1)) {
+    return 0;
+  }
+  LOGV("wifi p2p load driver");
+  if (strcmp(FIRMWARE_LOADER,"") == 0) {
+    usleep(WIFI_DRIVER_LOADER_DELAY);
+    property_set(DRIVER_PROP_NAME, "ok");
+  }
+  else {
+    property_set("ctl.start", WIFI_FIRMWARE_LOADER ":loadp2p");
+  }
+  sched_yield();
+  while (count-- > 0) {
+    if (property_get(DRIVER_PROP_NAME, driver_status, NULL)) {
+      if (strcmp(driver_status, "ok") == 0)
+	{
+	  wifi_profile_num =1;
+	return 0;
+	}
       else if (strcmp(DRIVER_PROP_NAME, "failed") == 0) {
 	wifi_unload_driver();
 	return -1;
@@ -258,7 +306,7 @@ int wifi_load_driver()
     char driver_status[PROPERTY_VALUE_MAX];
     int count = 100; /* wait at most 20 seconds for completion */
     LOGV("Wifi hardware load driver");
-    if (is_wifi_driver_loaded()) {
+    if (is_wifi_driver_loaded()&&(wifi_profile_num == 2)) {
         return 0;
     }
 #ifndef ATHEROS_WIFI_SDK  /* NOT atheros SDK */
@@ -280,7 +328,10 @@ int wifi_load_driver()
     while (count-- > 0) {
         if (property_get(DRIVER_PROP_NAME, driver_status, NULL)) {
             if (strcmp(driver_status, "ok") == 0)
+	      {
+		wifi_profile_num =2;
                 return 0;
+	      }
             else if (strcmp(DRIVER_PROP_NAME, "failed") == 0) {
                 wifi_unload_driver();
                 return -1;
@@ -317,6 +368,7 @@ int wifi_unload_driver()
         return -1;
 #else
     property_set(DRIVER_PROP_NAME, "unloaded");
+    wifi_profile_num = 0;
     return 0;
 #endif
 }
@@ -453,8 +505,10 @@ int ensure_config_file_exists(const char *config_file)
         LOGE("Cannot access \"%s\": %s", config_file, strerror(errno));
         return -1;
     }
-
-    srcfd = open(SUPP_CONFIG_TEMPLATE, O_RDONLY);
+    if(strcmp(config_file,P2P_CONFIG_FILE)== 0)
+      srcfd = open(P2P_CONFIG_TEMPLATE, O_RDONLY);
+    else
+      srcfd = open(SUPP_CONFIG_TEMPLATE, O_RDONLY);
     if (srcfd < 0) {
         LOGE("Cannot open \"%s\": %s", SUPP_CONFIG_TEMPLATE, strerror(errno));
         return -1;
@@ -586,13 +640,10 @@ int wifi_start_supplicant_common(const char *config_file)
     }
 #endif
     property_get("wifi.interface", iface, WIFI_TEST_INTERFACE);
-    snprintf(daemon_cmd, PROPERTY_VALUE_MAX, "%s:-i%s -c%s", SUPPLICANT_NAME, iface, config_file);
-    LOGE("daemon_cmd=%s",daemon_cmd);
-#ifdef ATHEROS_WIFI_SDK
-    property_set("ctl.start", SUPPLICANT_NAME);
-#else
+    snprintf(daemon_cmd, PROPERTY_VALUE_MAX, "%s:-Dar6003 -i%s -c%s", SUPPLICANT_NAME, iface, config_file);
+
     property_set("ctl.start", daemon_cmd);
-#endif
+
     sched_yield();
 
     while (count-- > 0) {
