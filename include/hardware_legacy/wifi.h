@@ -33,6 +33,12 @@ int wifi_load_driver();
  * @return 0 on success, <0 on failure.
  */
 int wifi_load_ap_driver();
+/**
+ * Load the P2P for Atheros Wi-Fi
+ *
+ * @return 0 on success, <0 on failure.
+ */
+int wifi_load_p2p_driver();
 
 /**
  * Unload the Wi-Fi driver.
@@ -40,6 +46,7 @@ int wifi_load_ap_driver();
  * @return 0 on success, < 0 on failure.
  */
 int wifi_unload_driver();
+
 
 /**
  * Check if the Wi-Fi driver is loaded.
