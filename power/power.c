@@ -65,8 +65,8 @@ const char * const V4L_STREAM_STATUS[] = {
 	"/sys/class/video4linux/video0/fsl_v4l2_overlay_property"
 };
 
-const char * const DVFS_CORE_EN_PATH = "/sys/devices/platform/mxc_dvfs_core.0/enable";
-const char * const BUSFREQ_EN_PATH = "/sys/devices/platform/busfreq.0/enable";
+const char * const DVFS_CORE_EN_PATH = "/sys/devices/platform/imx_dvfscore.0/enable";
+const char * const BUSFREQ_EN_PATH = "/sys/devices/platform/imx_busfreq.0/enable";
 
 const char * const AUTO_OFF_TIMEOUT_DEV = "/sys/android_power/auto_off_timeout";
 
@@ -209,7 +209,7 @@ int is_safe_suspend()
 		}
 	}
 
-	for (i = 0; i < 2; i++)
+	for (i = 0; i < (sizeof(V4L_STREAM_STATUS) / sizeof(V4L_STREAM_STATUS[0])); i++)
 	{
 		FILE *fp = fopen(V4L_STREAM_STATUS[i], "r");
 		if (fp != NULL)
@@ -357,6 +357,7 @@ set_screen_state(int on)
     return 0;
 }
 
+#ifdef CHECK_MX5X_HARDWARE
 void
 enable_dvfs_core(int on)
 {
@@ -386,3 +387,9 @@ enable_dvfs_core(int on)
     LOGD("Bus Frequency has been %s!\n", on? "enabled":"disabled");
 
 }
+#else
+void enable_dvfs_core(int on)
+{
+
+}
+#endif
