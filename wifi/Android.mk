@@ -51,7 +51,9 @@ endif
 ifdef WIFI_DRIVER_FW_PATH_PARAM
 LOCAL_CFLAGS += -DWIFI_DRIVER_FW_PATH_PARAM=\"$(WIFI_DRIVER_FW_PATH_PARAM)\"
 endif
-
+ifeq ($(BOARD_SOC_CLASS),IMX5X)
+LOCAL_CFLAGS += -DIMX5X
+endif
 
 ifdef BOARD_HAS_ATH_WLAN
   LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/wpa_supplicant/src/common
