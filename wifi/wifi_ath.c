@@ -210,9 +210,11 @@ int wifi_load_driver()
         return 0;
     }
 
-    /* if (insmod(DRIVER_COMPAT_MODULE_PATH, DRIVER_COMPAT_MODULE_ARG) < 0) {
+#if defined(IMX5X)
+     if (insmod(DRIVER_COMPAT_MODULE_PATH, DRIVER_COMPAT_MODULE_ARG) < 0) {
         return -1;
-	}*/
+	}
+#endif
 
     if (insmod(DRIVER_SDIO_IF_MODULE_PATH, DRIVER_SDIO_IF_MODULE_ARG) < 0) {
         return -1;
@@ -265,9 +267,11 @@ int wifi_load_p2p_driver()
         return 0;
     }
 
-    /* if (insmod(DRIVER_COMPAT_MODULE_PATH, DRIVER_COMPAT_MODULE_ARG) < 0) {
+#if defined(IMX5X)
+    if (insmod(DRIVER_COMPAT_MODULE_PATH, DRIVER_COMPAT_MODULE_ARG) < 0) {
         return -1;
-	}*/
+	}
+#endif
 
     if (insmod(DRIVER_SDIO_IF_MODULE_PATH, DRIVER_SDIO_IF_MODULE_ARG) < 0) {
         return -1;
@@ -329,10 +333,12 @@ static int _wifi_unload_driver()
                 return -1;
 		 }
 
+#if defined(IMX5X)
             /* unload compat kernel module */
-	    /*if (rmmod(DRIVER_COMPAT_MODULE_NAME) != 0) {
+	    if (rmmod(DRIVER_COMPAT_MODULE_NAME) != 0) {
                 return -1;
-		}*/
+		}
+#endif
         }
         else {
             return -1;
