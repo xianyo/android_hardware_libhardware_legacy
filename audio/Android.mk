@@ -69,6 +69,8 @@ endif
 
 include $(BUILD_SHARED_LIBRARY)
 
+ifneq (,$(findstring imx,$(TARGET_BOARD_PLATFORM)))
+
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := audio.primary.freescale
@@ -78,6 +80,7 @@ LOCAL_SHARED_LIBRARIES := liblog libcutils libaudio libutils
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
+endif
 
 #ifeq ($(ENABLE_AUDIO_DUMP),true)
 #  LOCAL_SRC_FILES += AudioDumpInterface.cpp
