@@ -73,7 +73,7 @@ ifneq (,$(findstring imx,$(TARGET_BOARD_PLATFORM)))
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := audio.primary.freescale
+LOCAL_MODULE := audio.legacy.freescale
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_SRC_FILES := audio_hw_hal.cpp
 LOCAL_SHARED_LIBRARIES := liblog libcutils libaudio libutils
