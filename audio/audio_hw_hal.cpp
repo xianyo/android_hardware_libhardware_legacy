@@ -590,7 +590,7 @@ struct legacy_audio_module HAL_MODULE_INFO_SYM = {
             tag: HARDWARE_MODULE_TAG,
             version_major: 1,
             version_minor: 0,
-            id: AUDIO_HARDWARE_MODULE_ID,
+            id: "audio.legacy",
             name: "LEGACY Audio HW HAL",
             author: "The Android Open Source Project",
             methods: &legacy_audio_module_methods,
