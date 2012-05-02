@@ -621,7 +621,7 @@ int wifi_start_supplicant_common(const char *config_file)
     }
 #endif
     property_get("wifi.interface", iface, WIFI_TEST_INTERFACE);
-    snprintf(daemon_cmd, PROPERTY_VALUE_MAX, "%s:-i%s -c%s -d", SUPPLICANT_NAME, iface, config_file);
+    snprintf(daemon_cmd, PROPERTY_VALUE_MAX, "%s:-i%s -c%s", SUPPLICANT_NAME, iface, config_file);
 #ifdef BOARD_HAS_ATH_WLAN
     LOGE("cmd = %s\n", daemon_cmd);
     usleep(1.5*WIFI_DRIVER_LOADER_DELAY);
