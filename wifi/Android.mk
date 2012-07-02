@@ -55,7 +55,7 @@ ifeq ($(BOARD_SOC_CLASS),IMX5X)
 LOCAL_CFLAGS += -DIMX5X
 endif
 
-ifdef BOARD_HAS_ATH_WLAN
+ifeq ($(BOARD_WLAN_VENDOR),ATHEROS)
   LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/wpa_supplicant/src/common
   LOCAL_CFLAGS += -DBOARD_HAS_ATH_WLAN=\"$(BOARD_HAS_ATH_WLAN)\"
   LOCAL_SRC_FILES += wifi/wifi_ath.c
@@ -63,9 +63,15 @@ else
   ifdef BOARD_HAVE_WIFI_CSR
 	LOCAL_SRC_FILES += wifi/wifi_unifi.c
   else
-	LOCAL_SRC_FILES += wifi/wifi.c
+		ifeq ($(BOARD_WLAN_VENDOR),INTEL)
+			LOCAL_SRC_FILES += wifi/wifi_intel.c
+			LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_7/src/common
+		else
+			LOCAL_SRC_FILES += wifi/wifi.c
+			LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
+		endif
   endif
-  LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
+
 endif
 
 
