@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 The Android Open Source Project
+ * Copyright (C) 2012 Freescale Semiconductor, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1859,12 +1860,16 @@ uint32_t AudioPolicyManagerBase::getDeviceForInputSource(int inputSource)
             device = AudioSystem::DEVICE_IN_BLUETOOTH_SCO_HEADSET;
         } else if (mAvailableInputDevices & AudioSystem::DEVICE_IN_WIRED_HEADSET) {
             device = AudioSystem::DEVICE_IN_WIRED_HEADSET;
+        } else if (mAvailableInputDevices & AudioSystem::DEVICE_IN_ANLG_DOCK_MIC) {
+            device = AudioSystem::DEVICE_IN_ANLG_DOCK_MIC;
         } else {
             device = AudioSystem::DEVICE_IN_BUILTIN_MIC;
         }
         break;
     case AUDIO_SOURCE_CAMCORDER:
-        if (hasBackMicrophone()) {
+        if (mAvailableInputDevices & AudioSystem::DEVICE_IN_ANLG_DOCK_MIC) {
+            device = AudioSystem::DEVICE_IN_ANLG_DOCK_MIC;
+        } else if (hasBackMicrophone()) {
             device = AudioSystem::DEVICE_IN_BACK_MIC;
         } else {
             device = AudioSystem::DEVICE_IN_BUILTIN_MIC;
