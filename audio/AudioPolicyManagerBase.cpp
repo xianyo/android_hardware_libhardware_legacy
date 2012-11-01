@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 The Android Open Source Project
+ * Copyright (C) 2012 Freescale Semiconductor, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2706,12 +2707,16 @@ audio_devices_t AudioPolicyManagerBase::getDeviceForInputSource(int inputSource)
             device = AUDIO_DEVICE_IN_BLUETOOTH_SCO_HEADSET;
         } else if (mAvailableInputDevices & AUDIO_DEVICE_IN_WIRED_HEADSET) {
             device = AUDIO_DEVICE_IN_WIRED_HEADSET;
+        } else if (mAvailableInputDevices & AUDIO_DEVICE_IN_USB_DEVICE) {
+            device = AUDIO_DEVICE_IN_USB_DEVICE;
         } else if (mAvailableInputDevices & AUDIO_DEVICE_IN_BUILTIN_MIC) {
             device = AUDIO_DEVICE_IN_BUILTIN_MIC;
         }
         break;
     case AUDIO_SOURCE_CAMCORDER:
-        if (mAvailableInputDevices & AUDIO_DEVICE_IN_BACK_MIC) {
+        if (mAvailableInputDevices & AUDIO_DEVICE_IN_USB_DEVICE) {
+            device = AUDIO_DEVICE_IN_USB_DEVICE;
+        } else if (mAvailableInputDevices & AUDIO_DEVICE_IN_BACK_MIC) {
             device = AUDIO_DEVICE_IN_BACK_MIC;
         } else if (mAvailableInputDevices & AUDIO_DEVICE_IN_BUILTIN_MIC) {
             device = AUDIO_DEVICE_IN_BUILTIN_MIC;
@@ -3666,6 +3671,7 @@ const struct StringToEnum sDeviceNameToEnumTable[] = {
     STRING_TO_ENUM(AUDIO_DEVICE_IN_ANLG_DOCK_HEADSET),
     STRING_TO_ENUM(AUDIO_DEVICE_IN_DGTL_DOCK_HEADSET),
     STRING_TO_ENUM(AUDIO_DEVICE_IN_USB_ACCESSORY),
+    STRING_TO_ENUM(AUDIO_DEVICE_IN_USB_DEVICE),
 };
 
 const struct StringToEnum sFlagNameToEnumTable[] = {
