@@ -64,9 +64,25 @@ ifeq ($(BOARD_WLAN_VENDOR),ATHEROS)
   LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_ath/wpa_supplicant/src/common
   LOCAL_CFLAGS += -DBOARD_HAS_ATH_WLAN=\"$(BOARD_HAS_ATH_WLAN)\"
   LOCAL_SRC_FILES += wifi/wifi_ath.c
+else ifeq ($(BOARD_WLAN_VENDOR), REALTEK)
+  LOCAL_SRC_FILES += ../realtek/wlan/libhardware_legacy/wifi/wifi_realtek.c
 else
-  LOCAL_SRC_FILES += wifi/wifi.c
-  LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
+  ifdef BOARD_HAVE_WIFI_CSR
+	LOCAL_SRC_FILES += wifi/wifi_unifi.c
+  else
+		ifeq ($(BOARD_WLAN_VENDOR),INTEL)
+			LOCAL_SRC_FILES += wifi/wifi_intel.c
+			LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_7/src/common
+		else
+			ifeq ($(BOARD_WLAN_VENDOR),BROADCOM)
+				LOCAL_SRC_FILES += wifi/wifi_bcm.c
+				LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant/
+			else
+				LOCAL_SRC_FILES += wifi/wifi.c
+				LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
+			endif
+		endif
+  endif
 
 endif
 
