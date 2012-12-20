@@ -1578,8 +1578,7 @@ AudioPolicyManagerBase::AudioPolicyManagerBase(AudioPolicyClientInterface *clien
         {
             const IOProfile *outProfile = mHwModules[i]->mOutputProfiles[j];
 
-            if ((outProfile->mSupportedDevices & mAttachedOutputDevices) &&
-                    ((outProfile->mFlags & AUDIO_OUTPUT_FLAG_DIRECT) == 0)) {
+            if (outProfile->mSupportedDevices & mAttachedOutputDevices && !(outProfile->mFlags & AUDIO_OUTPUT_FLAG_DIRECT)) {
                 AudioOutputDescriptor *outputDesc = new AudioOutputDescriptor(outProfile);
                 outputDesc->mDevice = (audio_devices_t)(mDefaultOutputDevice &
                                                             outProfile->mSupportedDevices);
