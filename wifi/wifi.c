@@ -77,7 +77,7 @@ static char iface[PROPERTY_VALUE_MAX];
 
 #define WIFI_DRIVER_LOADER_DELAY	5000000
 
-static const char IFACE_DIR[]           = "/data/system/wpa_supplicant";
+static const char IFACE_DIR[]           = "/dev/socket";
 #ifdef WIFI_DRIVER_MODULE_PATH
 static const char DRIVER_MODULE_NAME[]  = WIFI_DRIVER_MODULE_NAME;
 static const char DRIVER_MODULE_TAG[]   = WIFI_DRIVER_MODULE_NAME " ";
@@ -591,7 +591,7 @@ int wifi_connect_to_supplicant()
     }
 
     if (access(IFACE_DIR, F_OK) == 0) {
-        snprintf(ifname, sizeof(ifname), "%s/%s", IFACE_DIR, iface);
+        snprintf(ifname, sizeof(ifname), "%s/wpa_%s", IFACE_DIR, iface);
     } else {
         strlcpy(ifname, iface, sizeof(ifname));
     }
