@@ -75,6 +75,10 @@ static char iface[PROPERTY_VALUE_MAX];
 #define WIFI_DRIVER_FW_PATH_PARAM	"/sys/module/wlan/parameters/fwpath"
 #endif
 
+/*
+ * gpio175 (GP6:15) is used for WL enable on Nitrogen6x
+ */
+#define GPIO_WLAN_ENABLE		175
 #define WIFI_DRIVER_LOADER_DELAY	5000000
 
 static const char IFACE_DIR[]           = "/dev/socket";
@@ -236,6 +240,23 @@ int wifi_load_driver()
 #endif
 }
 
+#ifdef GPIO_WLAN_ENABLE
+static void set_gpio(char value)
+{
+	char gpiofile[256];
+	snprintf(gpiofile,sizeof(gpiofile),"/sys/class/gpio/gpio%u/value", GPIO_WLAN_ENABLE);
+	int fdgpio = open(gpiofile,O_WRONLY);
+	if (0 <= fdgpio) {
+		write(fdgpio,&value,1);
+		close(fdgpio);
+		LOGE("%s: write %c to %s\n", __func__, value, gpiofile);
+		sleep(1);
+	}
+	else
+		LOGE("%s: error opening %s:%m", __func__, gpiofile);
+}
+#endif
+
 int wifi_unload_driver()
 {
     usleep(200000); /* allow to finish interface down */
@@ -255,6 +276,9 @@ int wifi_unload_driver()
     } else
         return -1;
 #else
+#ifdef GPIO_WLAN_ENABLE
+		set_gpio('0');
+#endif
     property_set(DRIVER_PROP_NAME, "unloaded");
     return 0;
 #endif
@@ -514,8 +538,14 @@ int wifi_start_supplicant_common(const char *config_file)
         serial = pi->serial;
     }
 #endif
+
+#ifdef GPIO_WLAN_ENABLE
+	set_gpio('1');
+#endif
+
     property_get("wifi.interface", iface, WIFI_TEST_INTERFACE);
     snprintf(daemon_cmd, PROPERTY_VALUE_MAX, "%s:-i%s -c%s", SUPPLICANT_NAME, iface, config_file);
+
     property_set("ctl.start", daemon_cmd);
     sched_yield();
 
@@ -562,6 +592,9 @@ int wifi_stop_supplicant()
     /* Check whether supplicant already stopped */
     if (property_get(SUPP_PROP_NAME, supp_status, NULL)
         && strcmp(supp_status, "stopped") == 0) {
+#ifdef GPIO_WLAN_ENABLE
+		set_gpio('0');
+#endif
         return 0;
     }
 
@@ -570,11 +603,18 @@ int wifi_stop_supplicant()
 
     while (count-- > 0) {
         if (property_get(SUPP_PROP_NAME, supp_status, NULL)) {
-            if (strcmp(supp_status, "stopped") == 0)
+            if (strcmp(supp_status, "stopped") == 0) {
+#ifdef GPIO_WLAN_ENABLE
+		set_gpio('0');
+#endif
                 return 0;
+	    }
         }
         usleep(100000);
     }
+#ifdef GPIO_WLAN_ENABLE
+	set_gpio('0');
+#endif
     return -1;
 }
 
