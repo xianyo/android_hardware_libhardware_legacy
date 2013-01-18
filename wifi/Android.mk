@@ -72,7 +72,7 @@ else
   else
 		ifeq ($(BOARD_WLAN_VENDOR),INTEL)
 			LOCAL_SRC_FILES += wifi/wifi_intel.c
-			LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_7/src/common
+			LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
 		else
 			ifeq ($(BOARD_WLAN_VENDOR),BROADCOM)
 				LOCAL_SRC_FILES += wifi/wifi_bcm.c
