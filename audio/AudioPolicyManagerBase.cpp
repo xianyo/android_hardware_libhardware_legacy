@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 The Android Open Source Project
- * Copyright (C) 2012 Freescale Semiconductor, Inc.
+ * Copyright (C) 2012-2013 Freescale Semiconductor, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -507,6 +507,10 @@ AudioPolicyManagerBase::IOProfile *AudioPolicyManagerBase::getProfileForDirectOu
                                                                audio_channel_mask_t channelMask,
                                                                audio_output_flags_t flags)
 {
+
+    if (channelMask == AUDIO_CHANNEL_OUT_STEREO && flags != AUDIO_OUTPUT_FLAG_DIRECT)
+        return 0;
+
     for (size_t i = 0; i < mHwModules.size(); i++) {
         if (mHwModules[i]->mHandle == 0) {
             continue;
@@ -788,7 +792,6 @@ status_t AudioPolicyManagerBase::startOutput(audio_io_handle_t output,
         if (isInCall()) {
             handleIncallSonification(stream, true, false);
         }
-
         // apply volume rules for current stream and device if necessary
         checkAndSetVolume(stream,
                           mStreams[stream].getVolumeIndex(newDevice),
