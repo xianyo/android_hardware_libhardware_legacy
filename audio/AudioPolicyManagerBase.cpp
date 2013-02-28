@@ -31,6 +31,8 @@
 // A device mask for all audio output devices that are considered "remote" when evaluating
 // active output devices in isStreamActiveRemotely()
 #define APM_AUDIO_OUT_DEVICE_REMOTE_ALL  AUDIO_DEVICE_OUT_REMOTE_SUBMIX
+#define PRODUCT_DEVICE_PROPERTY "ro.product.device"
+#define PRODUCT_DEVICE_HDMIDONGLE     "hdmidongle"
 
 #include <inttypes.h>
 #include <math.h>
@@ -1547,6 +1549,10 @@ AudioPolicyManagerBase::AudioPolicyManagerBase(AudioPolicyClientInterface *clien
     mA2dpSuspended(false), mHasA2dp(false), mHasUsb(false), mHasRemoteSubmix(false),
     mSpeakerDrcEnabled(false)
 {
+    char property[PROPERTY_VALUE_MAX];
+    property_get(PRODUCT_DEVICE_PROPERTY, property, "");
+    mDeviceIsHdmidongle = (strstr(property, PRODUCT_DEVICE_HDMIDONGLE) != NULL);
+
     mpClientInterface = clientInterface;
 
     for (int i = 0; i < AudioSystem::NUM_FORCE_USE; i++) {
@@ -3230,7 +3236,7 @@ float AudioPolicyManagerBase::computeVolume(int stream,
     // if volume is not 0 (not muted), force media volume to max on digital output
     if (stream == AudioSystem::MUSIC &&
         index != mStreams[stream].mIndexMin &&
-        (device == AUDIO_DEVICE_OUT_AUX_DIGITAL ||
+        (((device == AUDIO_DEVICE_OUT_AUX_DIGITAL) && (mDeviceIsHdmidongle == false)) ||
          device == AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET)) {
         return 1.0;
     }
