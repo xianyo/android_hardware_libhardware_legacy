@@ -104,12 +104,32 @@ static unsigned char dummy_key[21] = { 0x02, 0x11, 0xbe, 0x33, 0x43, 0x35,
                                        0x1c, 0xd3, 0xee, 0xff, 0xf1, 0xe2,
                                        0xf3, 0xf4, 0xf5 };
 
+#ifdef GPIO_WLAN_ENABLE
+static void set_gpio(char value)
+{
+	char gpiofile[256];
+	snprintf(gpiofile,sizeof(gpiofile),"/sys/class/gpio/gpio%u/value", GPIO_WLAN_ENABLE);
+	int fdgpio = open(gpiofile,O_WRONLY);
+	if (0 <= fdgpio) {
+		write(fdgpio,&value,1);
+		close(fdgpio);
+		LOGE("%s: write %c to %s\n", __func__, value, gpiofile);
+		sleep(1);
+	}
+	else
+		LOGE("%s: error opening %s:%m", __func__, gpiofile);
+}
+#endif
+
 static int insmod(const char *filename, const char *args)
 {
     void *module;
     unsigned int size;
     int ret;
 
+#ifdef GPIO_WLAN_ENABLE
+    set_gpio('1');
+#endif
     module = load_file(filename, &size);
     if (!module)
         return -1;
@@ -134,6 +154,9 @@ static int rmmod(const char *modname)
             break;
     }
 
+#ifdef GPIO_WLAN_ENABLE
+    set_gpio('0');
+#endif
     if (ret != 0)
         LOGD("Unable to unload driver module \"%s\": %s\n",
              modname, strerror(errno));
@@ -239,23 +262,6 @@ int wifi_load_driver()
     return 0;
 #endif
 }
-
-#ifdef GPIO_WLAN_ENABLE
-static void set_gpio(char value)
-{
-	char gpiofile[256];
-	snprintf(gpiofile,sizeof(gpiofile),"/sys/class/gpio/gpio%u/value", GPIO_WLAN_ENABLE);
-	int fdgpio = open(gpiofile,O_WRONLY);
-	if (0 <= fdgpio) {
-		write(fdgpio,&value,1);
-		close(fdgpio);
-		LOGE("%s: write %c to %s\n", __func__, value, gpiofile);
-		sleep(1);
-	}
-	else
-		LOGE("%s: error opening %s:%m", __func__, gpiofile);
-}
-#endif
 
 int wifi_unload_driver()
 {
