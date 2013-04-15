@@ -16,7 +16,11 @@ endif
 ifeq ($(BOARD_HAVE_WIFI_CSR), true)
 LOCAL_SRC_FILES += wifi/wifi_unifi.c
 else
-LOCAL_SRC_FILES += wifi/wifi.c
+ifeq ($(BOARD_USES_REALTEK_WIFI),true)
+	LOCAL_SRC_FILES += wifi/wifi_realtek.c
+else
+	LOCAL_SRC_FILES += wifi/wifi.c
+endif
 endif
 
 ifdef BOARD_WLAN_ATHEROS_SDK
