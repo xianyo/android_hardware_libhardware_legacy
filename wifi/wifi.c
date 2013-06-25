@@ -694,7 +694,7 @@ int wifi_connect_to_supplicant(const char *ifname)
 
     if (is_primary_interface(ifname)) {
         if (access(IFACE_DIR, F_OK) == 0) {
-            snprintf(path, sizeof(path), "%s/%s", IFACE_DIR, primary_iface);
+            snprintf(path, sizeof(path), "%s/wpa_%s", IFACE_DIR, primary_iface);
         } else {
             strlcpy(path, primary_iface, sizeof(path));
         }
