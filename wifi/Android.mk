@@ -55,6 +55,9 @@ ifeq ($(BOARD_WLAN_DEVICE),UNITE)
 else ifeq ($(BOARD_WLAN_VENDOR), INTEL)
   LOCAL_SRC_FILES += wifi/wifi_intel.c
   LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
+else
+  LOCAL_SRC_FILES += wifi/wifi.c
+  LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
 endif
 
 LOCAL_SHARED_LIBRARIES += libnetutils
