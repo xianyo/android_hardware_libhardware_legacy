@@ -144,6 +144,7 @@ static const char IFACE_DIR[]           = "/data/system/wpa_supplicant";
 
 static const char FIRMWARE_LOADER[]     = WIFI_FIRMWARE_LOADER;
 static const char DRIVER_PROP_NAME[]    = "wlan.driver.status";
+static const char DRIVER_VENDOR_NAME[]  = "wlan.vendor";
 static const char SUPPLICANT_NAME[]     = "wpa_supplicant";
 static const char SUPP_PROP_NAME[]      = "init.svc.wpa_supplicant";
 static const char P2P_SUPPLICANT_NAME_ATHEROS[] = "p2p_supplicant";
@@ -192,9 +193,11 @@ int get_wifi_vendor_info()
         if (value == 0x024c)
         {
             ALOGD("detect a realtek card");
+            property_set(DRIVER_VENDOR_NAME, "realtek");
             return REALTEK;
         } else if (value == 0x0271) {
             ALOGD("detect an atheros card");
+            property_set(DRIVER_VENDOR_NAME, "atheros");
             return ATHEROS;
         }
 
@@ -380,6 +383,7 @@ int check_wifi_driver_loaded_strict(const char *driver_module_name)
     if ((proc = fopen(MODULE_FILE, "r")) == NULL) {
         ALOGW("Could not open %s: %s", MODULE_FILE, strerror(errno));
         property_set(DRIVER_PROP_NAME, "unloaded");
+        property_set(DRIVER_VENDOR_NAME, "");
         return 0;
     }
     while ((fgets(line, sizeof(line), proc)) != NULL) {
@@ -389,6 +393,7 @@ int check_wifi_driver_loaded_strict(const char *driver_module_name)
         }
     }
     fclose(proc);
+    property_set(DRIVER_VENDOR_NAME, "");
     property_set(DRIVER_PROP_NAME, "unloaded");
     return 0;
 }
