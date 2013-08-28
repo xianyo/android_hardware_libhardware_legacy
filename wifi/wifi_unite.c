@@ -171,21 +171,31 @@ static char supplicant_prop_name[PROPERTY_KEY_MAX];
 int get_wifi_vendor_info()
 {
 #define SYS_SDIO_BUS_BASE_PATH    "/sys/bus/sdio/devices/"
-#define SYS_SDIO_BUS_MMC1_PATH    SYS_SDIO_BUS_BASE_PATH"mmc1:0001:1/vendor"
-#define SYS_SDIO_BUS_MMC2_PATH    SYS_SDIO_BUS_BASE_PATH"mmc2:0001:1/vendor"
-
+#define SYS_SDIO_BUS_MMC_PATH(num)    SYS_SDIO_BUS_BASE_PATH"mmc"#num":0001:1/vendor"
+#define MAX_SDIO_NUM 4
+    const char* sdio_path[] = {
+        SYS_SDIO_BUS_MMC_PATH(0),
+        SYS_SDIO_BUS_MMC_PATH(1),
+        SYS_SDIO_BUS_MMC_PATH(2),
+        SYS_SDIO_BUS_MMC_PATH(3),
+    };
     char linebuf[1024];
     long value;
-    FILE *f = fopen(SYS_SDIO_BUS_MMC1_PATH, "r");
-    if (!f){
-        ALOGE("Unable to read %s: %s\n", SYS_SDIO_BUS_MMC1_PATH, strerror(errno));
-        f = fopen(SYS_SDIO_BUS_MMC2_PATH, "r");
-        if (!f)
+    int i;
+    FILE *f = NULL;
+    for (i = 0; i < MAX_SDIO_NUM; i++)
+    {
+        f = fopen(sdio_path[i], "r");
+        if (f)
         {
-            ALOGE("Unable to read %s: %s\n", SYS_SDIO_BUS_MMC2_PATH, strerror(errno));
-            return -1;
+            ALOGE("read a device on sdio bus: %s\n", sdio_path[i]);
+            break;
+        } else{
+            ALOGE("unable to read device on sdio bus: %s\n", sdio_path[i]);
         }
     }
+    if (f == NULL)
+        return -1;
     if (fgets(linebuf, sizeof(linebuf) -1, f))
     {
         ALOGD("read vendor info: %s", linebuf);
