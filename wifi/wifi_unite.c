@@ -119,7 +119,8 @@ static char primary_iface[PROPERTY_VALUE_MAX];
 #define WIFI_DRIVER_MODULE_PATH_REALTEK_8821AS          "/system/lib/modules/8821as.ko"
 #define WIFI_DRIVER_MODULE_NAME_REALTEK_8723AS          "8723as"
 #define WIFI_DRIVER_MODULE_NAME_REALTEK_8821AS          "8821as"
-#define WIFI_DRIVER_MODULE_ARG_REALTEK           "ifname=wlan0 if2name=p2p0"
+#define WIFI_DRIVER_MODULE_ARG_REALTEK_RTL8723AS           "ifname=wlan0 if2name=p2p0"
+#define WIFI_DRIVER_MODULE_ARG_REALTEK_RTL8821AS           "ifname=wlan0 if2name=p2p0 rtw_vht_enable=2"
 #define WIFI_SDIO_IF_DRIVER_MODULE_PATH_REALTEK  "/system/lib/modules/cfg80211_realtek.ko"
 
 static const char DRIVER_MODULE_NAME_ATHEROS[]      = WIFI_DRIVER_MODULE_NAME_ATHEROS;
@@ -138,7 +139,8 @@ static const char* DRIVER_MODULE_TAG_REALTEK[]       = {WIFI_DRIVER_MODULE_NAME_
                                                          WIFI_DRIVER_MODULE_NAME_REALTEK_8821AS " "};
 static const char* DRIVER_MODULE_PATH_REALTEK[]      = {WIFI_DRIVER_MODULE_PATH_REALTEK_8723AS,
                                                         WIFI_DRIVER_MODULE_PATH_REALTEK_8821AS};
-static const char DRIVER_MODULE_ARG_REALTEK[]       = WIFI_DRIVER_MODULE_ARG_REALTEK;
+static const char* DRIVER_MODULE_ARG_REALTEK[]       = {WIFI_DRIVER_MODULE_ARG_REALTEK_RTL8723AS,
+                                                       WIFI_DRIVER_MODULE_ARG_REALTEK_RTL8821AS};
 static const char DRIVER_SDIO_IF_MODULE_PATH_REALTEK[]  = WIFI_SDIO_IF_DRIVER_MODULE_PATH_REALTEK;
 
 static const char DRIVER_SDIO_IF_MODULE_NAME[]  = WIFI_SDIO_IF_DRIVER_MODULE_NAME;
@@ -153,8 +155,10 @@ static const char SUPPLICANT_NAME[]     = "wpa_supplicant";
 static const char SUPP_PROP_NAME[]      = "init.svc.wpa_supplicant";
 static const char P2P_SUPPLICANT_NAME_ATHEROS[] = "p2p_supplicant";
 static const char P2P_PROP_NAME_ATHEROS[]       = "init.svc.p2p_supplicant";
-static const char P2P_SUPPLICANT_NAME_REALTEK[] = "rtw_suppl_con"; /* p2p concurrent */
-static const char P2P_PROP_NAME_REALTEK[]       = "init.svc.rtw_suppl_con";
+static const char *P2P_SUPPLICANT_NAME_REALTEK[] = {"rtw_suppl_con",
+                                                    "rtw_supplc_adv"}; /* p2p concurrent */
+static const char *P2P_PROP_NAME_REALTEK[]       = {"init.svc.rtw_suppl_con",
+                                                    "init.svc.rtw_supplc_adv"};
 static const char SUPP_CONFIG_TEMPLATE[]= "/system/etc/wifi/wpa_supplicant.conf";
 static const char SUPP_CONFIG_FILE[]    = "/data/misc/wifi/wpa_supplicant.conf";
 static const char P2P_CONFIG_FILE[]     = "/data/misc/wifi/p2p_supplicant.conf";
@@ -478,7 +482,7 @@ int wifi_insmod_driver_realtek()
         ALOGE("%s: error via loading %s",__func__, DRIVER_SDIO_IF_MODULE_PATH_REALTEK);
         return -1;
     }
-    if (insmod(DRIVER_MODULE_PATH_REALTEK[WifiModel], DRIVER_MODULE_ARG_REALTEK) < 0)
+    if (insmod(DRIVER_MODULE_PATH_REALTEK[WifiModel], DRIVER_MODULE_ARG_REALTEK[WifiModel]) < 0)
     {
         ALOGE("%s: error via loading %s",__func__, DRIVER_MODULE_PATH_REALTEK[WifiModel]);
         return -1;
@@ -802,8 +806,8 @@ int wifi_start_supplicant(int p2p_supported)
             strcpy(supplicant_name, P2P_SUPPLICANT_NAME_ATHEROS);
             strcpy(supplicant_prop_name, P2P_PROP_NAME_ATHEROS);
         } else if (WifiVendor == REALTEK) {
-            strcpy(supplicant_name, P2P_SUPPLICANT_NAME_REALTEK);
-            strcpy(supplicant_prop_name, P2P_PROP_NAME_REALTEK);
+            strcpy(supplicant_name, P2P_SUPPLICANT_NAME_REALTEK[WifiModel]);
+            strcpy(supplicant_prop_name, P2P_PROP_NAME_REALTEK[WifiModel]);
         }
 
         /* Ensure p2p config file is created */
@@ -910,8 +914,8 @@ int wifi_stop_supplicant(int p2p_supported)
             strcpy(supplicant_prop_name, P2P_PROP_NAME_ATHEROS);
         } else if (WifiVendor == REALTEK)
         {
-            strcpy(supplicant_name, P2P_SUPPLICANT_NAME_REALTEK);
-            strcpy(supplicant_prop_name, P2P_PROP_NAME_REALTEK);
+            strcpy(supplicant_name, P2P_SUPPLICANT_NAME_REALTEK[WifiModel]);
+            strcpy(supplicant_prop_name, P2P_PROP_NAME_REALTEK[WifiModel]);
         }
     } else {
         strcpy(supplicant_name, SUPPLICANT_NAME);
