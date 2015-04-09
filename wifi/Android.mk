@@ -60,4 +60,10 @@ else
   LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
 endif
 
+ifdef USES_TI_MAC80211
+  LOCAL_STATIC_LIBRARIES := libnl_2
+  LOCAL_C_INCLUDES += external/libnl-headers
+  LOCAL_C_INCLUDES += hardware/ti/wlan/mac80211/wpa_supplicant_lib
+endif
+
 LOCAL_SHARED_LIBRARIES += libnetutils
