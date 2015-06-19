@@ -1029,6 +1029,9 @@ int wifi_command(const char *command, char *reply, size_t *reply_len)
 
 const char *wifi_get_fw_path(int fw_type)
 {
+#ifdef WIFI_BYPASS_FWRELOAD
+    return "bypass";
+#endif
     switch (fw_type) {
     case WIFI_GET_FW_PATH_STA:
         return WIFI_DRIVER_FW_PATH_STA;
@@ -1046,6 +1049,9 @@ int wifi_change_fw_path(const char *fwpath)
     int fd;
     int ret = 0;
 
+#ifdef WIFI_BYPASS_FWRELOAD
+    return 0;
+#endif
     if (!fwpath)
         return ret;
     fd = TEMP_FAILURE_RETRY(open(WIFI_DRIVER_FW_PATH_PARAM, O_WRONLY));

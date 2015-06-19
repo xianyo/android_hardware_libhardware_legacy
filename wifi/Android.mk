@@ -52,6 +52,10 @@ ifdef WIFI_DRIVER_FW_PATH_PARAM
 LOCAL_CFLAGS += -DWIFI_DRIVER_FW_PATH_PARAM=\"$(WIFI_DRIVER_FW_PATH_PARAM)\"
 endif
 
+ifdef WIFI_BYPASS_FWRELOAD
+LOCAL_CFLAGS += -DWIFI_BYPASS_FWRELOAD=\"$(WIFI_BYPASS_FWRELOAD)\"
+endif
+
 ifeq ($(BOARD_WLAN_DEVICE),UNITE)
   LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_ath/wpa_supplicant/src/common
   LOCAL_SRC_FILES += wifi/wifi_unite.c
