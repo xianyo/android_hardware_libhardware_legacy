@@ -111,7 +111,7 @@ static char primary_iface[PROPERTY_VALUE_MAX];
 
 #define WIFI_DRIVER_MODULE_PATH_BCM              "/system/lib/modules/bcmdhd.ko"
 #define WIFI_DRIVER_MODULE_NAME_BCM              "bcmdhd"
-#define WIFI_DRIVER_MODULE_ARG_BCM               "firmware_path=/system/etc/firmware/bcm/fw_bcmdhd.bin nvram_path=/system/etc/firmware/bcm/bcmdhd.cal"
+#define WIFI_DRIVER_MODULE_ARG_BCM               ""
 #define WIFI_SDIO_IF_DRIVER_MODULE_PATH_BCM  "/system/lib/modules/cfg80211_realtek.ko"
 
 #define WIFI_DRIVER_MODULE_PATH_ATHEROS          "/system/lib/modules/ath6kl_sdio.ko"
@@ -550,6 +550,7 @@ int wifi_load_driver()
     /* Sabresd_7d use BCM4339 by force */
     WifiVendor = BCM;
     WifiModel = BCM4335_4339;
+    property_set(DRIVER_VENDOR_NAME, "broadcom");
 #else
     WifiVendor = get_wifi_vendor_info(&WifiModel);
 #endif
@@ -1248,8 +1249,9 @@ int wifi_change_fw_path(const char *fwpath)
     int len;
     int fd;
     int ret = 0;
-
+#ifndef SABRESD_7D
     return ret;
+#endif
     if (!fwpath)
         return ret;
     fd = TEMP_FAILURE_RETRY(open(WIFI_DRIVER_FW_PATH_PARAM, O_WRONLY));
