@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <poll.h>
+#include <sys/stat.h>
 
 #include "hardware_legacy/wifi.h"
 #include "libwpa_client/wpa_ctrl.h"
