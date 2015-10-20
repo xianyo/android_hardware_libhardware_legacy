@@ -235,8 +235,11 @@ int get_wifi_vendor_info(int* model)
         }
     }
     if (f == NULL)
-        return -1;
-    if (fgets(linebuf, sizeof(linebuf) -1, f))
+    {
+        ALOGD("Nothing detected but we consider to detect the BCM card");
+        property_set(DRIVER_VENDOR_NAME, "broadcom");
+        vendor = BCM;
+    } else if (fgets(linebuf, sizeof(linebuf) -1, f))
     {
         ALOGD("read vendor info: %s", linebuf);
         value = strtol(linebuf, NULL, 16);
@@ -252,18 +255,14 @@ int get_wifi_vendor_info(int* model)
             fclose(f);
             return ATHEROS;
         }
-        else if (value == 0x02d0) {
-            ALOGD("detect the BCM card");
+        else {
+            ALOGD(" Nothing detected but we consider to detect the BCM card");
             property_set(DRIVER_VENDOR_NAME, "broadcom");
             vendor = BCM;
         }
-        else {
-            fclose(f);
-            *model = UNKNOWN_MODEL;
-            return UNKNOWN;
-        }
     }
-    fclose(f);
+    if (f)
+        fclose(f);
     f = NULL;
     f = fopen(sdio_device_path[i], "r");
     if (f)
@@ -289,15 +288,14 @@ int get_wifi_vendor_info(int* model)
                      *model = UNKNOWN_MODEL;
                  }
             } else if (vendor == BCM) {
-                if (value == 0x4335 || value == 0x4339) {
                     ALOGD("bcm 4335/4339 detected!");
                     *model = BCM4335_4339;
-                }
             }
         }
-    } else
-    {
-        ALOGE("error: Unable to read device file %s ", sdio_device_path[i]);
+        fclose(f);
+    } else {
+        ALOGD("Nothing detected but we consider to detect the BCM4339 card");
+        *model = BCM4335_4339;
     }
     return vendor;
 }
