@@ -1247,11 +1247,13 @@ int wifi_change_fw_path(const char *fwpath)
     int len;
     int fd;
     int ret = 0;
-#ifndef SABRESD_7D
-    return ret;
-#endif
+    char vendor_name[255];
+    property_get(DRIVER_VENDOR_NAME, vendor_name, "");
+    if (strcmp(vendor_name, "broadcom"))
+	return ret;
     if (!fwpath)
         return ret;
+    ALOGD("Set wifi firmware path:%s", fwpath);
     fd = TEMP_FAILURE_RETRY(open(WIFI_DRIVER_FW_PATH_PARAM, O_WRONLY));
     if (fd < 0) {
         ALOGE("Failed to open wlan fw path param (%s)", strerror(errno));
@@ -1262,6 +1264,7 @@ int wifi_change_fw_path(const char *fwpath)
         ALOGE("Failed to write wlan fw path param (%s)", strerror(errno));
         ret = -1;
     }
+
     close(fd);
     return ret;
 }
