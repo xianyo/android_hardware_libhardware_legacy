@@ -165,8 +165,8 @@ static const char DRIVER_SDIO_IF_MODULE_ARG[]   = WIFI_SDIO_IF_DRIVER_MODULE_ARG
 
 static const char IFACE_DIR[]           = "/data/system/wpa_supplicant";
 
-static const char BCM_SUPP_PROP_NAME[]      = "init.svc.bcm_supplicant";
-static const char BCM_SUPPLICANT_NAME[]     = "bcm_supplicant";
+static const char BCM_SUPP_PROP_NAME[]      = "init.svc.wpa_supplicant";
+static const char BCM_SUPPLICANT_NAME[]     = "wpa_supplicant";
 static const char FIRMWARE_LOADER[]     = WIFI_FIRMWARE_LOADER;
 static const char DRIVER_PROP_NAME[]    = "wlan.driver.status";
 static const char DRIVER_VENDOR_NAME[]  = "wlan.vendor";
