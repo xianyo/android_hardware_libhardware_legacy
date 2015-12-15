@@ -67,7 +67,7 @@ else
   LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
 endif
 
-ifdef WPA_SUPPLICANT_VERSION
+ifneq ($(WPA_SUPPLICANT_VERSION), none)
 LOCAL_CFLAGS += -DLIBWPA_CLIENT_EXISTS
 LOCAL_SHARED_LIBRARIES += libwpa_client
 endif
