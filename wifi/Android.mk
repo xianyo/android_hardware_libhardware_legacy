@@ -65,9 +65,6 @@ ifeq ($(TARGET_PRODUCT),sabresd_7d)
   LOCAL_CFLAGS += -DSABRESD_7D
 endif
   LOCAL_SRC_FILES += wifi/wifi_unite.c
-else ifeq ($(BOARD_WLAN_VENDOR), INTEL)
-  LOCAL_SRC_FILES += wifi/wifi_intel.c
-  LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
 else
   LOCAL_SRC_FILES += wifi/wifi.c
   LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../external/wpa_supplicant_8/src/common
