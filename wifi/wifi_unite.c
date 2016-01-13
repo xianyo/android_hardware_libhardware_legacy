@@ -1,6 +1,6 @@
 /*
  * Copyright 2008, The Android Open Source Project
- * Copyright (C) 2015 Freescale Semiconductor, Inc.
+ * Copyright (C) 2015-2016 Freescale Semiconductor, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -756,6 +756,7 @@ int update_ctrl_interface(const char *config_file) {
         property_get("wifi.interface", ifc, WIFI_TEST_INTERFACE);
         if (wifi_ifname(PRIMARY) == NULL) {
             ALOGE("%s: get wifi_ifname(PRIMARY) fail\n", __func__);
+            free(pbuf);
             return -1;
         }
         strcpy(ifc, wifi_ifname(PRIMARY));
