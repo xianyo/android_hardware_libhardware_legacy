@@ -759,7 +759,12 @@ int update_ctrl_interface(const char *config_file) {
             free(pbuf);
             return -1;
         }
-        strcpy(ifc, wifi_ifname(PRIMARY));
+	if (strlen(wifi_ifname(PRIMARY)) < PROPERTY_VALUE_MAX)
+	    strcpy(ifc, wifi_ifname(PRIMARY));
+	else {
+	    ALOGE("too long wifi_ifname.");
+            return -1;
+	}
     } else {
         strcpy(ifc, CONTROL_IFACE_PATH);
     }
