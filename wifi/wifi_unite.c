@@ -738,6 +738,7 @@ int update_ctrl_interface(const char *config_file) {
     pbuf = malloc(sb.st_size + PROPERTY_VALUE_MAX);
     if (!pbuf)
         return 0;
+    memset(pbuf, 0, sb.st_size + PROPERTY_VALUE_MAX);
     srcfd = TEMP_FAILURE_RETRY(open(config_file, O_RDONLY));
     if (srcfd < 0) {
         ALOGE("Cannot open \"%s\": %s", config_file, strerror(errno));
